@@ -27,32 +27,32 @@ How to Use
 4. Configure the URLs to monitor:
 	- Create entries in the *appSettings* node:
 	```xml
-	<appSettings>
-		<!--add key="uniqueName" value="http://yourUrlHere.com,text to look for in HTML"/-->
-		<add key="google" value="http://www.google.com,I'm feeling lucky"/>
-	</appSettings>
+	&lt;appSettings&gt;
+		&lt;!--add key="uniqueName" value="http://yourUrlHere.com,text to look for in HTML"/--&gt;
+		&lt;add key="google" value="http://www.google.com,I'm feeling lucky"/&gt;
+	&lt;/appSettings&gt;
 	```
 	- Set the SMTP values for sending email:
 	```xml
-	<applicationSettings>
-		<SimpleSiteMonitor.Settings>
-			<setting name="SmtpServer" serializeAs="String">
-				<value>smtp.gmail.com</value>
-			</setting>
-			<setting name="SmtpPort" serializeAs="String">
-				<value>587</value>
-			</setting>
-			<setting name="FromAddress" serializeAs="String">
-				<value>youraccount@gmail.com</value>
-			</setting>
-			<setting name="ToAddress" serializeAs="String">
-				<value>youraccount@gmail.com</value>
-			</setting>
-			<setting name="Password" serializeAs="String">
-				<value>yourPassword</value>
-			</setting>
-		</SimpleSiteMonitor.Settings>
-	</applicationSettings>
+	&lt;applicationSettings&gt;
+		&lt;SimpleSiteMonitor.Settings&gt;
+			&lt;setting name="SmtpServer" serializeAs="String"&gt;
+				&lt;value&gt;smtp.gmail.com&lt;/value&gt;
+			&lt;/setting&gt;
+			&lt;setting name="SmtpPort" serializeAs="String"&gt;
+				&lt;value&gt;587&lt;/value&gt;
+			&lt;/setting&gt;
+			&lt;setting name="FromAddress" serializeAs="String"&gt;
+				&lt;value&gt;youraccount@gmail.com&lt;/value&gt;
+			&lt;/setting&gt;
+			&lt;setting name="ToAddress" serializeAs="String"&gt;
+				&lt;value&gt;youraccount@gmail.com&lt;/value&gt;
+			&lt;/setting&gt;
+			&lt;setting name="Password" serializeAs="String"&gt;
+				&lt;value&gt;yourPassword&lt;/value&gt;
+			&lt;/setting&gt;
+		&lt;/SimpleSiteMonitor.Settings&gt;
+	&lt;/applicationSettings&gt;
 	```
 5. Create a Windows scheduled task to execute *SimpleSiteMonitor.exe" on the schedule of your choosing
 6. Done
