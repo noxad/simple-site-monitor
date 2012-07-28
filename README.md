@@ -7,6 +7,8 @@ Background
 ---------------------
 I wanted to monitor the availability of various website that I developer and/or host. Searching the Internet yielded a lot of nice pay options and some limited functionality free options. I figured I'd create my own basic monitor and just run it as a scheduled task on my Windows desktop at home. Been running it for years now and it's worked perfectly, giving me the simple monitoring that I needed. 
 
+Search for expected text uses regular expression matching because it was quick and simple. I acknowledge that using regular expressions to parse HTML is generally not advisable, but due to the simplicity of the implementation here, it works just fine. Read up [here](http://stackoverflow.com/questions/1732348/regex-match-open-tags-except-xhtml-self-contained-tags) on why you shouldn't use regular expressions to parse HTML, using an XML parser instead. 
+
 Features
 ---------------------
 
