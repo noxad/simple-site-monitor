@@ -27,25 +27,55 @@ How to Use
 4. Configure the URLs to monitor:
 	- Create entries in the *appSettings* node:
 	```
-	<!--add key="uniqueName" value="http://yourUrlHere.com,text to look for in HTML"/-->  
+	<!--add key="uniqueName" value="http://yourUrlHere.com,text to look for in HTML"/-->
+	```
+	```
 	<add key="google" value="http://www.google.com,I'm feeling lucky"/>
 	```
 	- Set the SMTP values for sending email in the *applicationSettings* node:
 	```
-	<setting name="SmtpServer" serializeAs="String">  
-		<value>smtp.gmail.com</value>  
-	</setting>  
-	<setting name="SmtpPort" serializeAs="String">  
-		<value>587</value>  
-	</setting>  
-	<setting name="FromAddress" serializeAs="String">  
-		<value>youraccount@gmail.com</value>  
-	</setting>  
-	<setting name="ToAddress" serializeAs="String">  
-		<value>youraccount@gmail.com</value>  
-	</setting>  
-	<setting name="Password" serializeAs="String">  
-		<value>yourPassword</value>  
+	<setting name="SmtpServer" serializeAs="String">
+	```
+	```
+		<value>smtp.gmail.com</value>
+	```
+	```
+	</setting>
+	```
+	```
+	<setting name="SmtpPort" serializeAs="String">
+	```
+	```
+		<value>587</value>
+	```
+	```
+	</setting>
+	```
+	```
+	<setting name="FromAddress" serializeAs="String">
+	```
+	```
+		<value>youraccount@gmail.com</value>
+	```
+	```
+	</setting>
+	```
+	```
+	<setting name="ToAddress" serializeAs="String">
+	```
+	```
+		<value>youraccount@gmail.com</value>
+	```
+	```
+	</setting>
+	```
+	```
+	<setting name="Password" serializeAs="String">
+	```
+	```
+		<value>yourPassword</value>
+	```
+	```
 	</setting>
 	```
 5. Create a Windows scheduled task to execute *SimpleSiteMonitor.exe" on the schedule of your choosing
