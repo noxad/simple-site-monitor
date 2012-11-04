@@ -25,6 +25,7 @@ namespace SimpleSiteMonitor
         /// Makes a web request using the specified URL and verifies whether or not the request succeeds
         /// </summary>
         /// <param name="url">URL to check</param>
+        /// <param name="textToLookFor">String of text to look for in HTMl response</param>
         private static void CheckUrl(string url, string textToLookFor)
         {
             HttpWebResponse response = null;
@@ -94,6 +95,11 @@ namespace SimpleSiteMonitor
             }
         }
 
+        /// <summary>
+        /// Sends an email using the SMTP settings in app.config
+        /// </summary>
+        /// <param name="subject">Email subject</param>
+        /// <param name="body">Email body</param>
         private static void SendEmail(string subject, string body)
         {
             MailAddress fromAddress = new MailAddress(Settings.Default.FromAddress);
