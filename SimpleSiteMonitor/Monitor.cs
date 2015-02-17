@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Mail;
@@ -7,15 +8,15 @@ namespace SimpleSiteMonitor
 {
     class Monitor
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            System.Collections.Specialized.NameValueCollection appSettings = System.Configuration.ConfigurationManager.AppSettings;
+            var appSettings = System.Configuration.ConfigurationManager.AppSettings;
             
-            foreach (string monitor in appSettings.AllKeys)
+            foreach (var monitor in appSettings.AllKeys)
             {
-                string[] urlAndText = appSettings[monitor].Split(',');
-                string url = urlAndText[0];
-                string textToLookFor = urlAndText[1];
+                var urlAndText = appSettings[monitor].Split(',');
+                var url = urlAndText[0];
+                var textToLookFor = urlAndText[1];
 
                 CheckUrl(url, textToLookFor);
             }
@@ -34,27 +35,28 @@ namespace SimpleSiteMonitor
 
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                var request = (HttpWebRequest)WebRequest.Create(url);
                 response = (HttpWebResponse)request.GetResponse();
 
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    StreamReader reader = new StreamReader(response.GetResponseStream());
-                    string html = reader.ReadToEnd();
+                if (response.StatusCode != HttpStatusCode.OK)
+                    return;
 
-                    if (html.ToLower().Contains(textToLookFor.ToLower()))
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        SendEmail("WEBSITE DOWN (expected text not found): " + url, "URL: " + url + Environment.NewLine
-                            + "The expected text \"" + textToLookFor + "\" was not found");
-                    }                    
+                var stream = response.GetResponseStream();
+                if (stream == null)
+                {
+                    SendEmail("Site Monitor Error - response stream was null", String.Empty);
+                    return;
                 }
 
-                statusCode = ((int)response.StatusCode).ToString();
-                statusDescription = response.StatusDescription;
+                var reader = new StreamReader(stream);
+                var html = reader.ReadToEnd();
+
+                if (html.ToLower().Contains(textToLookFor.ToLower()))
+                    return;
+
+                SendEmail("WEBSITE DOWN (expected text not found): " + url, 
+                    "URL: " + url + Environment.NewLine 
+                    + "The expected text \"" + textToLookFor + "\" was not found");
             }
             // WebException has an HttpWebResponse member which can provide an HTTP status code and description, so handle it differently
             catch (WebException webException)
@@ -63,7 +65,7 @@ namespace SimpleSiteMonitor
 
                 if (response != null)
                 {
-                    statusCode = ((int)response.StatusCode).ToString();
+                    statusCode = ((int)response.StatusCode).ToString(CultureInfo.InvariantCulture);
                     statusDescription = response.StatusDescription;
                 }
                 else
@@ -72,15 +74,16 @@ namespace SimpleSiteMonitor
                     statusDescription = webException.Message;
                 }
 
-                SendEmail("WEBSITE DOWN: " + url, "URL: " + url + Environment.NewLine
-                    + "Status Code: " + statusCode + Environment.NewLine
+                SendEmail("WEBSITE DOWN: " + url, 
+                    "URL: " + url + Environment.NewLine 
+                    + "Status Code: " + statusCode + Environment.NewLine 
                     + "Status Description: " + statusDescription);
             }
             catch (Exception generalException)
             {
                 if (response != null)
                 {
-                    statusCode = ((int)response.StatusCode).ToString();
+                    statusCode = ((int)response.StatusCode).ToString(CultureInfo.InvariantCulture);
                     statusDescription = response.StatusDescription;
                 }
                 else
@@ -89,8 +92,9 @@ namespace SimpleSiteMonitor
                     statusDescription = generalException.Message;
                 }
 
-                SendEmail("WEBSITE DOWN: " + url, "URL: " + url + Environment.NewLine
-                    + "Status Code: " + statusCode + Environment.NewLine
+                SendEmail("WEBSITE DOWN: " + url, 
+                    "URL: " + url + Environment.NewLine 
+                    + "Status Code: " + statusCode + Environment.NewLine 
                     + "Status Description: " + statusDescription);
             }
         }
@@ -102,25 +106,30 @@ namespace SimpleSiteMonitor
         /// <param name="body">Email body</param>
         private static void SendEmail(string subject, string body)
         {
-            MailAddress fromAddress = new MailAddress(Settings.Default.FromAddress);
-            string fromPassword = Settings.Default.Password;
-            MailAddress toAddress = new MailAddress(Settings.Default.ToAddress);            
+            var fromAddress = new MailAddress(Settings.Default.FromAddress);
+            var fromPassword = Settings.Default.Password;
+            var toAddresses = Settings.Default.ToAddress.Split(',');
 
-            using (SmtpClient smtp = new SmtpClient())
+            using (var smtpClient = new SmtpClient())
             {
-                smtp.Host = Settings.Default.SmtpServer;
-                smtp.Port = int.Parse(Settings.Default.SmtpPort);
-                smtp.EnableSsl = true;
-                smtp.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtp.UseDefaultCredentials = false;
-                smtp.Credentials = new NetworkCredential(fromAddress.Address, fromPassword);
+                smtpClient.Host = Settings.Default.SmtpServer;
+                smtpClient.Port = int.Parse(Settings.Default.SmtpPort);
+                smtpClient.EnableSsl = true;
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential(fromAddress.Address, fromPassword);
 
-                using (MailMessage message = new MailMessage(fromAddress, toAddress))
+                using (var message = new MailMessage())
                 {
+                    foreach (var address in toAddresses)
+                        message.To.Add(address);
+
+                    message.From = new MailAddress(Settings.Default.FromAddress);
+
                     message.Subject = subject;
                     message.Body = body;
 
-                    smtp.Send(message);
+                    smtpClient.Send(message);
                 }
             }
         }
